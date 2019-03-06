@@ -52,18 +52,25 @@ import { ShareDataTableAdapter } from './../data/share-datatable-adapter';
 import { presetsDefaultModel } from '../models/preset.model';
 import { ContentActionModel } from './../models/content-action.model';
 import { PermissionStyleModel } from './../models/permissions-style.model';
-import { DocumentListService } from './../services/document-list.service';
 import { NodeEntityEvent, NodeEntryEvent } from './node.event';
 import { CustomResourcesService } from './../services/custom-resources.service';
 import { NavigableComponentInterface } from '../../breadcrumb/navigable-component.interface';
 import { RowFilter } from '../data/row-filter.model';
 import { Observable } from 'rxjs/index';
+import { BaseDocumentListService } from '../services/base-document-list.service';
+import { DocumentListService } from '../services/document-list.service';
 
 @Component({
     selector: 'adf-document-list',
     styleUrls: ['./document-list.component.scss'],
     templateUrl: './document-list.component.html',
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    providers: [
+        {
+            provide: BaseDocumentListService,
+            useClass: DocumentListService
+        }
+    ]
 })
 export class DocumentListComponent implements OnInit, OnChanges, OnDestroy, AfterContentInit, PaginatedComponent, NavigableComponentInterface {
 
@@ -313,7 +320,7 @@ export class DocumentListComponent implements OnInit, OnChanges, OnDestroy, Afte
     private rowMenuCache: { [key: string]: ContentActionModel[] } = {};
     private loadingTimeout;
 
-    constructor(private documentListService: DocumentListService,
+    constructor(private baseDocumentListService: BaseDocumentListService,
                 private ngZone: NgZone,
                 private elementRef: ElementRef,
                 private appConfig: AppConfigService,
@@ -372,7 +379,7 @@ export class DocumentListComponent implements OnInit, OnChanges, OnDestroy, Afte
     ngOnInit() {
         this.rowMenuCache = {};
         this.loadLayoutPresets();
-        this.data = new ShareDataTableAdapter(this.documentListService, this.thumbnailService, this.contentService, null, this.getDefaultSorting(), this.sortingMode);
+        this.data = new ShareDataTableAdapter(this.thumbnailService, this.contentService, null, this.getDefaultSorting(), this.sortingMode);
         this.data.thumbnails = this.thumbnails;
         this.data.permissionsStyle = this.permissionsStyle;
 
@@ -410,7 +417,7 @@ export class DocumentListComponent implements OnInit, OnChanges, OnDestroy, Afte
         }
 
         if (!this.data) {
-            this.data = new ShareDataTableAdapter(this.documentListService, this.thumbnailService, this.contentService, schema, this.getDefaultSorting(), this.sortingMode);
+            this.data = new ShareDataTableAdapter(this.thumbnailService, this.contentService, schema, this.getDefaultSorting(), this.sortingMode);
         } else if (schema && schema.length > 0) {
             this.data.setColumns(schema);
         }
@@ -632,7 +639,7 @@ export class DocumentListComponent implements OnInit, OnChanges, OnDestroy, Afte
                 });
         } else {
 
-            this.documentListService.getFolder(null, {
+            this.baseDocumentListService.getNodeChildren(null, {
                 maxItems: this._pagination.maxItems,
                 skipCount: this._pagination.skipCount,
                 rootFolderId: nodeId,
@@ -649,7 +656,7 @@ export class DocumentListComponent implements OnInit, OnChanges, OnDestroy, Afte
     }
 
     getSourceNodeWithPath(nodeId: string): Observable<NodeEntry> {
-        let getSourceObservable = this.documentListService.getFolderNode(nodeId, this.includeFields);
+        let getSourceObservable = this.baseDocumentListService.getNodeById(nodeId, this.includeFields);
 
         getSourceObservable.subscribe((nodeEntry: NodeEntry) => {
             this.folderNode = nodeEntry.entry;
