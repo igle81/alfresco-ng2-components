@@ -20,13 +20,15 @@ import { SettingsPage } from '../../../pages/adf/settingsPage';
 import TestConfig = require('../../../test.config');
 import { browser } from 'protractor';
 import { NavigationBarPage } from '../../../pages/adf/navigationBarPage';
+import { LoginPage } from '../../../pages/adf/loginPage';
 
 describe('Login component - SSO', () => {
 
     const settingsPage = new SettingsPage();
     const loginApsPage = new LoginSSOPage();
+    const loginPage = new LoginPage();
     const navigationBarPage = new NavigationBarPage();
-    let silentLogin;
+    let silentLogin, implicitFlow;
 
     afterEach(() => {
         navigationBarPage.clickLogoutButton();
@@ -44,5 +46,19 @@ describe('Login component - SSO', () => {
     it('[C280667] Should be redirect directly to keycloak without show the login page with silent login', () => {
         settingsPage.setProviderBpmSso(TestConfig.adf.hostBPM, TestConfig.adf.hostSso, TestConfig.adf.hostIdentity);
         loginApsPage.loginAPS(TestConfig.adf.adminEmail, TestConfig.adf.adminPassword);
+    });
+
+    it('[C299158] Should be possible to login to BPM with SSO, with Implicit Flow false and Silent Login false', () => {
+        silentLogin = false;
+        implicitFlow = false;
+        settingsPage.setProviderBpmSso(TestConfig.adf.hostBPM, TestConfig.adf.hostSso, TestConfig.adf.hostIdentity, silentLogin, implicitFlow);
+        loginPage.login(TestConfig.adf.adminEmail, TestConfig.adf.adminPassword);
+    });
+
+    it('[C299159] Should be possible to login to BPM with SSO, with Implicit Flow false and Silent Login true', () => {
+        silentLogin = true;
+        implicitFlow = false;
+        settingsPage.setProviderBpmSso(TestConfig.adf.hostBPM, TestConfig.adf.hostSso, TestConfig.adf.hostIdentity, silentLogin, implicitFlow);
+        loginPage.login(TestConfig.adf.adminEmail, TestConfig.adf.adminPassword);
     });
 });
