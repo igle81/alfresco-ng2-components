@@ -81,7 +81,7 @@ export class ExtensionService {
     }
 
     getFeature(key: string): any[] {
-        let properties: string[] = Array.isArray(key) ? [key] : key.split('.');
+        const properties: string[] = Array.isArray(key) ? [key] : key.split('.');
         return properties.reduce((prev, curr) => prev && prev[curr], this.features) || [];
     }
 

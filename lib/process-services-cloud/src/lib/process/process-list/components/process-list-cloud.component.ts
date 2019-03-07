@@ -174,7 +174,7 @@ export class ProcessListCloudComponent extends DataTableSchema implements OnChan
     }
 
     private isPropertyChanged(changes: SimpleChanges): boolean {
-        for (let property in changes) {
+        for (const property in changes) {
             if (changes.hasOwnProperty(property)) {
                 if (changes[property] &&
                     (changes[property].currentValue !== changes[property].previousValue)) {
@@ -220,7 +220,7 @@ export class ProcessListCloudComponent extends DataTableSchema implements OnChan
     }
 
     private createRequestNode(): ProcessQueryCloudRequestModel {
-        let requestNode = {
+        const requestNode = {
             appName: this.appName,
             appVersion: this.appVersion,
             maxItems: this.size,

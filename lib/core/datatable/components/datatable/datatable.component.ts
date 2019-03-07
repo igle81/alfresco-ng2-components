@@ -238,7 +238,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
     }
 
     ngDoCheck() {
-        let changes = this.differ.diff(this.rows);
+        const changes = this.differ.diff(this.rows);
         if (changes) {
             this.setTableRows(this.rows);
         }
@@ -260,7 +260,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
 
     private initAndSubscribeClickStream() {
         this.unsubscribeClickStream();
-        let singleClickStream = this.click$
+        const singleClickStream = this.click$
             .pipe(
                 buffer(
                     this.click$.pipe(
@@ -272,7 +272,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
             );
 
         this.singleClickStreamSub = singleClickStream.subscribe((dataRowEvents: DataRowEvent[]) => {
-            let event: DataRowEvent = dataRowEvents[0];
+            const event: DataRowEvent = dataRowEvents[0];
             this.handleRowSelection(event.value, <MouseEvent | KeyboardEvent> event.event);
             this.rowClick.emit(event);
             if (!event.defaultPrevented) {
@@ -285,7 +285,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
             }
         });
 
-        let multiClickStream = this.click$
+        const multiClickStream = this.click$
             .pipe(
                 buffer(
                     this.click$.pipe(
@@ -297,7 +297,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
             );
 
         this.multiClickStreamSub = multiClickStream.subscribe((dataRowEvents: DataRowEvent[]) => {
-            let event: DataRowEvent = dataRowEvents[0];
+            const event: DataRowEvent = dataRowEvents[0];
             this.rowDblClick.emit(event);
             if (!event.defaultPrevented) {
                 this.elementRef.nativeElement.dispatchEvent(
@@ -427,7 +427,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
         if (event) {
             event.preventDefault();
         }
-        let dataRowEvent = new DataRowEvent(row, event, this);
+        const dataRowEvent = new DataRowEvent(row, event, this);
         this.clickObserver.next(dataRowEvent);
     }
 
@@ -470,7 +470,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
 
     onColumnHeaderClick(column: DataColumn) {
         if (column && column.sortable) {
-            let current = this.data.getSorting();
+            const current = this.data.getSorting();
             let newDirection = 'asc';
             if (current && column.key === current.key) {
                 newDirection = current.direction === 'asc' ? 'desc' : 'asc';
@@ -484,7 +484,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
         this.isSelectAllChecked = matCheckboxChange.checked;
 
         if (this.multiselect) {
-            let rows = this.data.getRows();
+            const rows = this.data.getRows();
             if (rows && rows.length > 0) {
                 for (let i = 0; i < rows.length; i++) {
                     this.selectRow(rows[i], matCheckboxChange.checked);
@@ -509,7 +509,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
 
     onImageLoadingError(event: Event, row: DataRow) {
         if (event) {
-            let element = <any> event.target;
+            const element = <any> event.target;
 
             if (this.fallbackThumbnail) {
                 element.src = this.fallbackThumbnail;
@@ -521,7 +521,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
 
     isIconValue(row: DataRow, col: DataColumn): boolean {
         if (row && col) {
-            let value = row.getValue(col.key);
+            const value = row.getValue(col.key);
             return value && value.startsWith('material-icons://');
         }
         return false;
@@ -529,7 +529,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
 
     asIconValue(row: DataRow, col: DataColumn): string {
         if (this.isIconValue(row, col)) {
-            let value = row.getValue(col.key) || '';
+            const value = row.getValue(col.key) || '';
             return value.replace('material-icons://', '');
         }
         return null;
@@ -541,14 +541,14 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
 
     isColumnSorted(col: DataColumn, direction: string): boolean {
         if (col && direction) {
-            let sorting = this.data.getSorting();
+            const sorting = this.data.getSorting();
             return sorting && sorting.key === col.key && sorting.direction === direction;
         }
         return false;
     }
 
     getContextMenuActions(row: DataRow, col: DataColumn): any[] {
-        let event = new DataCellEvent(row, col, []);
+        const event = new DataCellEvent(row, col, []);
         this.showRowContextMenu.emit(event);
         return event.value.actions;
     }
@@ -557,7 +557,7 @@ export class DataTableComponent implements AfterContentInit, OnChanges, DoCheck,
         const id = row.getValue('id');
 
         if (!this.rowMenuCache[id]) {
-            let event = new DataCellEvent(row, col, []);
+            const event = new DataCellEvent(row, col, []);
             this.showRowActionsMenu.emit(event);
             if (!this.rowMenuCacheEnabled) {
                 return event.value.actions;
