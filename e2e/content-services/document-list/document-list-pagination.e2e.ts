@@ -28,7 +28,6 @@ import { Util } from '../../util/util';
 
 import AlfrescoApi = require('alfresco-js-api-node');
 import { UploadActions } from '../../actions/ACS/upload.actions';
-import { browser } from 'protractor';
 
 describe('Document List - Pagination', function () {
     let pagination = {
